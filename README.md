@@ -10,7 +10,7 @@
 
 ### 读取excel文件：
 
-数据源(表名称：测试表1)：
+#### 数据源(表名称：测试表1)：
 
 | 物品编码 | 物品名称        | 存放位置 | 备注                       | 日期     |
 | -------- | --------------- | -------- | -------------------------- | -------- |
@@ -19,7 +19,7 @@
 | TY122652 | 黑白激光打印机  | 0        | 兄弟 HL-5590DN             | 2021.2.3 |
 | TY122634 | 台式计算机      | 0        | 联想ThinkCentre M710t-D749 | 2021.2.4 |
 
-创建实体对象：
+#### 创建实体对象：
 
 ```java
 @ExcelTable(sheetName = "测试表1")
@@ -82,25 +82,53 @@ Excel.get().readWith(is).doReadXLSX(new IParseListener<Table>() {
 
 
 
-## 输出excel文件：
+### 输出excel文件：
 
-
+#### 标注实体类
 
 ```java
 @ExcelTable(sheetName = "测试表1")
 public class Table {
 
     @ExcelWriteCell(writeIndex = 2, writeName = "存放位置")
+    @CellStyle(
+            horizontalAlign = HorizontalAlignment.CENTER, 
+            verticalAlign = VerticalAlignment.CENTER, 
+            underline = FontUnderline.SINGLE,
+            bold = true,
+            italic = false
+    )
     public String storageLocation;
 
     @ExcelWriteCell(writeIndex = 1, writeName = "物品名称")
+    @CellStyle(
+            horizontalAlign = HorizontalAlignment.CENTER, 
+            verticalAlign = VerticalAlignment.CENTER, 
+            underline = FontUnderline.SINGLE,
+            bold = true,
+            italic = false
+    )
     public String name;
 
     @ExcelWriteCell(writeIndex = 0, writeName = "物品编码")
+    @CellStyle(
+            horizontalAlign = HorizontalAlignment.CENTER, 
+            verticalAlign = VerticalAlignment.CENTER, 
+            underline = FontUnderline.SINGLE,
+            bold = true,
+            italic = false
+    )
     public String code;
     
     //如果你将多个数据聚合在某一个变量中，可以通过实现IConvertParserAdapter接口来处理数据以便正确写入文件
     @ExcelWriteAdapter(adapter = JsonArrayConvertAdapter.class)
+    @CellStyle(
+            horizontalAlign = HorizontalAlignment.CENTER, 
+            verticalAlign = VerticalAlignment.CENTER, 
+            underline = FontUnderline.SINGLE,
+            bold = true,
+            italic = false
+    )
     public String extend;
 }
 ```
@@ -131,7 +159,7 @@ ExcelWriteAdapter用来辅助工具正确写入用户自定义的聚合数据。
 
 Name 表示列名称，value表示值，index表示列号，这里的数据结构可以自行定义。
 
-##### IConvertParserAdapter 接口
+##### IConvertParserAdapter
 
 使用了聚合数据，就需要实现IConvertParserAdapter接口用来解析你的聚合数据并通过**ISheet**接口回调数据的列名称，值，列号等信息。
 
@@ -159,12 +187,99 @@ public class JsonArrayConvertAdapter implements IConvertParserAdapter {
 }
 ```
 
-##### @ExcelWriteAdapter使用方法：
+@ExcelWriteAdapter使用方法：
 
 ```java
  @ExcelWriteAdapter(adapter = JsonArrayConvertAdapter.class)
  public String extend;
 ```
+
+##### @CellStyle
+
+```java
+//horizontalAlig属性 水平方向位置
+public enum HorizontalAlignment {
+    
+    GENERAL,
+
+    LEFT,
+    
+    CENTER,
+
+    RIGHT,
+    
+    FILL,
+
+    JUSTIFY,
+
+    CENTER_SELECTION,
+
+    DISTRIBUTED
+}
+
+//verticalAlign属性 垂直方向位置
+public enum VerticalAlignment {
+  
+    TOP,
+
+    CENTER,
+
+    BOTTOM,
+
+    JUSTIFY,
+
+    DISTRIBUTED
+}
+//下划线
+
+/**
+ * the different types of possible underline formatting
+ *
+ * @author Gisella Bronzetti
+ */
+public enum FontUnderline {
+
+    /**
+     * Single-line underlining under each character in the cell.
+     * The underline is drawn through the descenders of
+     * characters such as g and p..
+     */
+    SINGLE(1),
+
+    /**
+     * Double-line underlining under each character in the
+     * cell. underlines are drawn through the descenders of
+     * characters such as g and p.
+     */
+    DOUBLE(2),
+
+    /**
+     * Single-line accounting underlining under each
+     * character in the cell. The underline is drawn under the
+     * descenders of characters such as g and p.
+     */
+    SINGLE_ACCOUNTING(3),
+
+    /**
+     * Double-line accounting underlining under each
+     * character in the cell. The underlines are drawn under
+     * the descenders of characters such as g and p.
+     */
+    DOUBLE_ACCOUNTING(4),
+
+    /**
+     * No underline.
+     */
+    NONE(5);
+ 
+  //bold 是否粗体显示
+  boolean
+  
+  //italic 字体是否倾斜显示
+  boolean
+```
+
+
 
 #### Use:
 
