@@ -35,7 +35,7 @@ public class ParserImpl<T> implements IParser<T> {
 
     @Override
     public ITabContext parseXSSFContext(Workbook workbook, Class<T> clazz) throws NotFindSheetException {
-        String sheetName = "";
+        String sheetName;
         Sheet sheet;
         TableContext tableContext = new TableContext();
         int numberOfSheets = workbook.getNumberOfSheets();
@@ -56,7 +56,6 @@ public class ParserImpl<T> implements IParser<T> {
             tableContext.setSheetIndex(0);
             tableContext.setSheetName(sheetName);
         }
-        ;
         Row row = sheet.getRow(0);
         int physicalNumberOfCells = row.getPhysicalNumberOfCells();
         Log.d(TAG, "parseContext: physicalNumberOfCells number = " + physicalNumberOfCells);
@@ -67,7 +66,7 @@ public class ParserImpl<T> implements IParser<T> {
             headerMap.put(columnIndex, cellFormatValue);
         }
         tableContext.setExcelProperty(headerMap);
-        Log.d(TAG, "parseContext: headerMap = " + headerMap.toString());
+        Log.d(TAG, "parseContext: headerMap = " + headerMap);
         return tableContext;
     }
 
@@ -124,15 +123,10 @@ public class ParserImpl<T> implements IParser<T> {
                 }
             }
             handler.post(() -> listener.onParse((T) item, extend));
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            handler.post(() -> listener.onParseError(e));
-        } catch (InstantiationException e) {
+        } catch (InstantiationException | IllegalAccessException | JSONException e) {
             e.printStackTrace();
             handler.post(() -> listener.onParseError(e));
             Log.d(TAG, "parseData: ");
-        } catch (JSONException e) {
-            handler.post(() -> listener.onParseError(e));
         }
     }
 
@@ -163,15 +157,12 @@ public class ParserImpl<T> implements IParser<T> {
                     cellValue = String.valueOf(cell.getBooleanCellValue());
                     break;
                 //错误
-                case Cell.CELL_TYPE_ERROR:
-                    cellValue = "error";
-                    break;
                 //公式
                 case Cell.CELL_TYPE_FORMULA:
                     cellValue = "<公式类型无法解析>";
                     break;
                 default:
-                    cellValue = "错误";
+                    cellValue = "";
             }
 
         } else {

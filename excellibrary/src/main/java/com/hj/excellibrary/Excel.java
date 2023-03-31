@@ -32,7 +32,6 @@ public class Excel {
         iExcelUtils = new ExcelImpl();
     }
 
-
     public static Excel get() {
         if (excel == null) {
             excel = new Excel();
